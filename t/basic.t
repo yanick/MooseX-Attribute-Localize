@@ -1,4 +1,4 @@
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 {
 package Foo; 
@@ -8,6 +8,7 @@ package Foo;
     has 'bar' => (
         traits => [ 'Localize' ],
         is => 'rw',
+        predicate => 'has_bar',
         handles => {
             set_local_bar => 'localize'
         },
@@ -34,3 +35,8 @@ is $foo->bar => 1;
 
 is $foo->bar => 1;
 
+subtest "attribute is cleared" => sub {
+    my $s = $foo->set_local_bar;
+    ok ! $foo->has_bar, "bar is cleared";
+    is $foo->bar => undef, "bar is undef";
+};
