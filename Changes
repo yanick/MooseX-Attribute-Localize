@@ -8,6 +8,7 @@ Revision history for MooseX-Attribute-Localize
   [ DOCUMENTATION ]
 
   [ ENHANCEMENTS ]
+  - Added hooks for when pushing, popping, and a way to access the stack.
 
   [ NEW FEATURES ]
 

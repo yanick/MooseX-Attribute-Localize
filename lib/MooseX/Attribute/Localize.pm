@@ -13,6 +13,9 @@ has _value_stack => (
     },
 );
 
+has localize_push => ( is => 'ro', predicate => 'has_localize_push' );
+has localize_pop  => ( is => 'ro', predicate => 'has_localize_pop' );
+
 before '_canonicalize_handles' => sub {
     my( $self ) = @_;
 
@@ -27,16 +30,36 @@ before '_canonicalize_handles' => sub {
             
             $attr->clear_value($object);
 
-            $attr->set_value( $object, shift ) if @_;
+            my $new_value;
+
+            $attr->set_value( $object, $new_value = shift ) if @_;
 
             warn "localize called in void context is a no-op\n"
                 unless defined wantarray;
+
+             if( my $method = $attr->localize_push ) {
+                 my $func = ref $method ? $method :
+                    sub { my $self = shift; $self->$method(@_) };
+                 $func->( $object, $new_value, $old, $attr );
+             }
 
             return MooseX::Attribute::Localize::Sentinel->new(
                 attribute => $attr,
                 object => $object,
             );
     } for grep { $_ eq 'localize' } values %$handles;
+
+    $_ = sub { 
+            my $object = shift;
+
+            my $attr = $object->meta->get_attribute( $self->name );
+
+            my @values = reverse @{ $attr->_value_stack };
+            unshift @values, $attr->get_value($object) if $attr->has_value($object);
+
+            return @values;
+
+    } for grep { $_ eq 'localize_stack' } values %$handles;
 
 };
 
@@ -49,7 +72,16 @@ package MooseX::Attribute::Localize::Sentinel;
 
     sub DEMOLISH {
         my $self = shift;
-        $self->attribute->set_value( $self->object, $self->attribute->_pop_value );
+        my $old_value = $self->attribute->get_value( $self->object );
+        my $new_value = $self->attribute->_pop_value;
+        $self->attribute->set_value( $self->object, $new_value );
+        if( my $method = $self->attribute->localize_pop ) {
+            my $func = ref $method ? $method : sub {
+                my $self = shift;
+                $self->$method(@_);
+            };
+            $func->($self->object,$new_value,$old_value,$self->attribute);
+        }
     }
 }
 
@@ -110,7 +142,7 @@ is called in a void context, a warning will be issued as
 the sentinel will immediately get out of scope, which 
 turns the whole thing into a glorious no-op.
 
-=head1 PROVIDED METHODS
+=head1 PROVIDED DELEGATION METHODS
 
 =head2 localize( $new_value )
 
@@ -120,6 +152,74 @@ value to it.
 The method returns a sentinel object that will return the attribute to its previous value once it gets
 out of scope. The method will warn if it is called in a void context (as the sentinel will immediately
 falls out of scope). 
+
+=head2 localize_stack
+
+Returns the stack of values for the attribute, including the current value.
+
+    {
+        package Foo;
+
+        use Moose;
+        use MooseX::Attribute::Localize;
+
+        has bar => (
+            traits => [ 'Localize' ],
+            is => 'rw',
+            handles => {
+                local_bar => 'localize',
+                bar_stack => 'localize_stack',
+            },
+        );
+    }
+
+    my $foo = Foo->new( bar => 'a' );
+    
+    {
+        $foo->local_bar('b');
+        my @stack = $self->bar_stack;  # ( 'a', 'b' )
+    }
+
+
+=head1 ATTRIBUTE ARGUMENTS
+
+    has bar => (
+            traits => [ 'Localize' ],
+            is => 'rw',
+            localize_push => 'spy_on_push',
+            localize_pop  => sub { 
+                my( $object, $new, $old, $attribute ) = @_;
+                ...;
+            },
+            handles => {
+                local_bar => 'localize',
+                bar_stack => 'localize_stack',
+            },
+    );
+
+    sub spy_on_push {
+        my( $self, $new, $old, $attribute ) = @_;
+        ...;
+    }
+
+=head2 localize_push
+
+If defined, will be called when a new value is pushed unto the attribute's
+stack. Can be the name of a method of the parent object, or a coderef. 
+
+When called,
+the associated function/method will be passed the object, the new pushed
+value, the previous one, and the attribute object.
+
+=head2 localize_pop
+
+If defined, will be called when a new value is popped from the attribute's
+stack. Can be the name of a method of the parent object, or a coderef. 
+
+When called,
+the associated function/method will be passed the object, the new popped
+value, the previous one, and the attribute object.
+
 
 =cut
 
