@@ -8,11 +8,17 @@ Revision history for MooseX-Attribute-Localize
   [ DOCUMENTATION ]
 
   [ ENHANCEMENTS ]
-  - Added hooks for when pushing, popping, and a way to access the stack.
 
   [ NEW FEATURES ]
 
   [ STATISTICS ]
+
+0.1.0 2016-01-01
+  [ ENHANCEMENTS ]
+    - Added hooks for when pushing, popping, and a way to access the stack.
+
+  [ STATISTICS ]
+    - code churn: 4 files changed, 196 insertions(+), 3 deletions(-)
 
 0.0.1 2015-12-31
   - First version, unleashed on an unsuspecting world.
