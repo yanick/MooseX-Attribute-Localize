@@ -176,7 +176,7 @@ Returns the stack of values for the attribute, including the current value.
     my $foo = Foo->new( bar => 'a' );
     
     {
-        $foo->local_bar('b');
+        my $s = $foo->local_bar('b');
         my @stack = $self->bar_stack;  # ( 'a', 'b' )
     }
 

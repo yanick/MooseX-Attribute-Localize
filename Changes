@@ -6,6 +6,7 @@ Revision history for MooseX-Attribute-Localize
   [ BUG FIXES ]
 
   [ DOCUMENTATION ]
+  - Example didn't have sentinel (and thus was buggy). (ilmari)
 
   [ ENHANCEMENTS ]
 
