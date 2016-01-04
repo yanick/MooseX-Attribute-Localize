@@ -1,18 +1,11 @@
 Revision history for MooseX-Attribute-Localize
 
-{{$NEXT}}
-  [ API CHANGES ]
-
-  [ BUG FIXES ]
-
+0.1.1 2016-01-03
   [ DOCUMENTATION ]
-  - Example didn't have sentinel (and thus was buggy). (ilmari)
-
-  [ ENHANCEMENTS ]
-
-  [ NEW FEATURES ]
+    - Example didn't have sentinel (and thus was buggy). (ilmari)
 
   [ STATISTICS ]
+    - code churn: 2 files changed, 9 insertions(+), 2 deletions(-)
 
 0.1.0 2016-01-01
   [ ENHANCEMENTS ]
