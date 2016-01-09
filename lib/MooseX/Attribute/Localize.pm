@@ -1,6 +1,7 @@
 package MooseX::Attribute::Localize;
+our $AUTHORITY = 'cpan:YANICK';
 # ABSTRACT: localize attribute values within a scope
-
+$MooseX::Attribute::Localize::VERSION = '0.1.2';
 use Moose::Role;
 
 has _value_stack => (
@@ -64,9 +65,10 @@ before '_canonicalize_handles' => sub {
 };
 
 {
-package MooseX::Attribute::Localize::Sentinel; 
-
-    use Moose;
+package MooseX::Attribute::Localize::Sentinel;
+our $AUTHORITY = 'cpan:YANICK'; 
+$MooseX::Attribute::Localize::Sentinel::VERSION = '0.1.2';
+use Moose;
 
     has [qw/ attribute object /] => ( is => 'ro' );
 
@@ -87,14 +89,27 @@ package MooseX::Attribute::Localize::Sentinel;
 
 {
     package Moose::Meta::Attribute::Custom::Trait::Localize;
-
-    sub register_implementation { 'MooseX::Attribute::Localize' }
+our $AUTHORITY = 'cpan:YANICK';
+$Moose::Meta::Attribute::Custom::Trait::Localize::VERSION = '0.1.2';
+sub register_implementation { 'MooseX::Attribute::Localize' }
 
 }
 
 1;
 
 __END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+MooseX::Attribute::Localize - localize attribute values within a scope
+
+=head1 VERSION
+
+version 0.1.2
 
 =head1 SYNOPSIS
 
@@ -180,7 +195,6 @@ Returns the stack of values for the attribute, including the current value.
         my @stack = $self->bar_stack;  # ( 'a', 'b' )
     }
 
-
 =head1 ATTRIBUTE ARGUMENTS
 
     has bar => (
@@ -220,7 +234,15 @@ When called,
 the associated function/method will be passed the object, the new popped
 value, the previous one, and the attribute object.
 
+=head1 AUTHOR
+
+Yanick Champoux <yanick@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2015 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
-
-

@@ -1,7 +1,0 @@
-^dist.ini
-^MANIFEST.SKIP
-MooseX-Attribute-Localize.*
-^\.gitignore
-^\.git
-^\.build
-
