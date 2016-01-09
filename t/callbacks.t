@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 2;
-use Test::Deep;
+use Test::Deep 0.111;
 
 {
     package Foo;
