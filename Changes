@@ -4,6 +4,7 @@ Revision history for MooseX-Attribute-Localize
   [ API CHANGES ]
 
   [ BUG FIXES ]
+  - Set minimal version for Test::Deep (for 'obj_isa').
 
   [ DOCUMENTATION ]
 
